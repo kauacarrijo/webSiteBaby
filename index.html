@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Julia Altheya</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8c8dc;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        #waveCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px rgba(180, 120, 200, 0.3);
+            margin-bottom: 16px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #f0b6d6, #c9a0dc);
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #4a2060;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .bio {
+            font-size: 0.9rem;
+            color: #6b3a7d;
+            margin-bottom: 32px;
+            font-weight: 300;
+            line-height: 1.5;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 24px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            position: relative;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            color: #4a2060;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Contorno gradiente animado (borda interna) */
+        .link-btn::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 18px;
+            padding: 2px;
+            background: linear-gradient(135deg, #f8c8dc, #d4a5e5, #f0b6d6, #c9a0dc);
+            background-size: 300% 300%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease, background-position 0.4s ease;
+        }
+
+        /* Brilho de fundo no hover */
+        .link-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(212, 165, 229, 0.3) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .link-btn:hover {
+            transform: translateY(-4px) scale(1.03);
+            background: rgba(255, 255, 255, 0.35);
+            border-color: transparent;
+            box-shadow:
+                0 8px 32px rgba(180, 120, 200, 0.25),
+                0 0 20px rgba(212, 165, 229, 0.15);
+        }
+
+        .link-btn:hover::before {
+            opacity: 1;
+            animation: borderGlow 3s linear infinite;
+        }
+
+        .link-btn:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes borderGlow {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .link-btn:active {
+            transform: translateY(0) scale(0.97);
+            box-shadow: 0 2px 12px rgba(180, 120, 200, 0.2);
+        }
+
+        .link-btn svg {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .link-btn:hover svg {
+            transform: scale(1.15);
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: rgba(74, 32, 96, 0.5);
+            font-weight: 300;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 30px 16px;
+            }
+
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            .link-btn {
+                padding: 14px 20px;
+                font-size: 0.95rem;
+            }
+
+            .profile-pic {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="waveCanvas"></canvas>
+
+    <div class="container">
+        <img src="juliaAltheya.jpg" alt="Ana Julia Altheya" class="profile-pic">
+
+        <h1>Ana Julia Altheya</h1>
+        <p class="bio">Escritora & Criadora de Conteúdo</p>
+
+        <div class="links">
+            <a href="https://substack.com/@juliaaltheya" target="_blank" rel="noopener noreferrer" class="link-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/>
+                </svg>
+                Substack
+            </a>
+
+            <a href="https://www.tiktok.com/@julia.altheya" target="_blank" rel="noopener noreferrer" class="link-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.18 8.18 0 0 0 4.76 1.52V6.8a4.83 4.83 0 0 1-1-.11z"/>
+                </svg>
+                TikTok
+            </a>
+
+            <a href="https://www.instagram.com/julia.altheya" target="_blank" rel="noopener noreferrer" class="link-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                </svg>
+                Instagram
+            </a>
+        </div>
+
+        <p class="footer">Ana Julia Altheya</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Brilho que segue o mouse dentro dos botões
+        document.querySelectorAll('.link-btn').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                btn.style.setProperty('--x', x + '%');
+                btn.style.setProperty('--y', y + '%');
+            });
+        });
+
+        // --- Ondas do fundo ---
+        let width, height;
+        let mouseX, mouseY;
+        let smoothMouseX, smoothMouseY;
+        let time = 0;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            mouseX = smoothMouseX = width / 2;
+            mouseY = smoothMouseY = height / 2;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Captura mouse no body inteiro (não no canvas com pointer-events:none)
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            mouseX = e.touches[0].clientX;
+            mouseY = e.touches[0].clientY;
+        }, { passive: true });
+
+        // Ondas: velocidade bem lenta, amplitude suave
+        const waves = [
+            { y: 0.20, amp: 25, freq: 0.003, speed: 0.0008, color: [232, 180, 240, 0.25] },
+            { y: 0.35, amp: 30, freq: 0.0025, speed: 0.0006, color: [212, 165, 229, 0.22] },
+            { y: 0.50, amp: 22, freq: 0.004, speed: 0.001,  color: [248, 200, 220, 0.25] },
+            { y: 0.65, amp: 28, freq: 0.003, speed: 0.0007, color: [240, 182, 214, 0.22] },
+            { y: 0.80, amp: 20, freq: 0.0035, speed: 0.0012, color: [201, 160, 220, 0.25] },
+        ];
+
+        function drawWave(wave, t) {
+            ctx.beginPath();
+            ctx.moveTo(0, height);
+
+            // Normaliza posição do mouse (0 a 1)
+            const mx = smoothMouseX / width;
+            const my = smoothMouseY / height;
+
+            // O mouse desloca a base da onda suavemente
+            const baseY = wave.y * height + (my - 0.5) * 50;
+
+            for (let x = 0; x <= width; x += 4) {
+                // Distância horizontal normalizada do pixel ao mouse
+                const dx = (x / width) - mx;
+                // Quanto mais perto do mouse, maior a deformação (gaussiana)
+                const mousePull = Math.exp(-dx * dx * 8) * (my - 0.5) * 80;
+
+                const y = baseY
+                    + Math.sin(x * wave.freq + t * wave.speed) * wave.amp
+                    + Math.sin(x * wave.freq * 1.8 + t * wave.speed * 0.7 + 2) * wave.amp * 0.4
+                    + mousePull;
+
+                ctx.lineTo(x, y);
+            }
+
+            ctx.lineTo(width, height);
+            ctx.closePath();
+
+            const [r, g, b, a] = wave.color;
+            const gradient = ctx.createLinearGradient(0, baseY - wave.amp * 2, 0, height);
+            gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${a})`);
+            gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0.05)`);
+
+            ctx.fillStyle = gradient;
+            ctx.fill();
+        }
+
+        function drawBackground() {
+            const bgGradient = ctx.createLinearGradient(0, 0, width, height);
+            bgGradient.addColorStop(0, '#fce4ec');
+            bgGradient.addColorStop(0.35, '#f3e5f5');
+            bgGradient.addColorStop(0.65, '#f8c8dc');
+            bgGradient.addColorStop(1, '#edd5f5');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, width, height);
+        }
+
+        function animate(timestamp) {
+            time = timestamp || 0;
+
+            // Suaviza o mouse (easing lento para movimento fluido)
+            smoothMouseX += (mouseX - smoothMouseX) * 0.03;
+            smoothMouseY += (mouseY - smoothMouseY) * 0.03;
+
+            drawBackground();
+
+            for (const wave of waves) {
+                drawWave(wave, time);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+    </script>
+</body>
+</html>
